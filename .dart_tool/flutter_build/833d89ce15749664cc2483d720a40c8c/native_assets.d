@@ -1,0 +1,1 @@
+ /Users/tigrangariban/Desktop/VS/RickAndMortyFlutter/.dart_tool/flutter_build/833d89ce15749664cc2483d720a40c8c/native_assets.yaml: 
