@@ -1,8 +1,9 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Screens/DetailCharacter/detail_character.dart';
-import 'package:flutter_application_1/Service/Models/character.dart';
+import 'package:flutter_application_1/Screens/CharacterList/list_view_cell.dart';
+import 'package:flutter_application_1/Screens/CharacterList/bloc/character_list_bloc.dart';
 import 'package:flutter_application_1/Service/character_page_loader.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 class CharacterListWidget extends StatefulWidget {
 
@@ -13,32 +14,19 @@ class CharacterListWidget extends StatefulWidget {
 }
 
 class CharacterListWidgetState extends State<CharacterListWidget> {
-
-  List<Character> data = [];
-  var isFinished = false;
   final ScrollController _scrollController = ScrollController();
-  final CharacterPageLoader service = CharacterPageLoader();
-
-  void loadData() async {
-    var response = await service.loadNextPage();
-    if (response == null) {
-      return;
-    }
-
-    data += response.results;
-    setState(() {});
-  }
+  final characterBloc = CharacterListBloc(CharacterPageLoader());
 
   @override
   void initState() {
     _scrollController.addListener(_loadMoreData);
-    loadData();
+    characterBloc.add(Loading());
     super.initState();
   }
 
-    void _loadMoreData() {
+  void _loadMoreData() {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-      loadData();
+      characterBloc.add(Loading());
     }
   }
 
@@ -49,59 +37,56 @@ class CharacterListWidgetState extends State<CharacterListWidget> {
         title: const Text('Rick && Morty', style: TextStyle(color: Colors.black, fontSize: 30, fontWeight: FontWeight.bold),),
       ),
       body: 
-        Stack(children: [
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(image: AssetImage('assets/images/backgrpund.jpeg'), fit: BoxFit.fill)
-            ),
-          ),
-          Padding(padding: const EdgeInsets.all(8.0),
-            child: ListView.separated(
-              controller: _scrollController,
-              itemCount: data.length,
-              itemBuilder: (_, i) => ListViewCell(data[i]), 
-              separatorBuilder: (_, i) => const Divider(),
-            ),
-          )        
-        ]),
+        BlocBuilder<CharacterListBloc, CharacterListState>(
+          bloc: characterBloc,
+          builder: (context, state) {
+              return Stack(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(image: AssetImage('assets/images/backgrpund.jpeg'), fit: BoxFit.fill)
+                    ),
+                  ),
+                  characterListView(state),
+                  indicatorLoading(state)
+                ],
+              );
+            }
+        )
     );
   }
-}
 
-class ListViewCell extends StatefulWidget {
-  final Character model;
-  const ListViewCell(this.model, {super.key});
+  Widget characterListView(CharacterListState state) {
+    if (state.data != null) {
+      return Padding(
+        padding: const  EdgeInsets.all(8),
+        child: ListView.separated(
+          controller: _scrollController,
+          itemCount: state.data!.length,
+          itemBuilder: (_, i) => ListViewCell(state.data![i]), 
+          separatorBuilder: (_, i) => const Divider(),
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
 
-  @override
-  State<StatefulWidget> createState() => ListViewCellState(model);
-}
-
-class ListViewCellState extends State<ListViewCell> {
-  Character model;
-  ListViewCellState(this.model);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(model.name, style: const TextStyle(fontSize: 25, color: Colors.black),),
-      subtitle: Text('${model.species} ${model.gender}'),
-      leading: Image.network(
-        model.image,
-        fit: BoxFit.fill,
-        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Center(
-            child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
-            ),
-          );
-        },
-      ),
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => DetailCharacterWidget(index: model.id))
-        );
-      },
-    ); 
+  Widget indicatorLoading(CharacterListState state) {
+    if (state is CharacterListLoading) {
+      return Center(
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.black45,
+            borderRadius: BorderRadius.all(Radius.circular(10))
+          ),
+          height: 100,
+          width: 100,
+          child: const Center(child: SizedBox(height: 50, width: 50, child: LoadingIndicator(indicatorType: Indicator.lineSpinFadeLoader, colors: [Colors.red],),)),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
