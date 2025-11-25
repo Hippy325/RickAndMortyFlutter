@@ -1,0 +1,1 @@
+ /Users/tigrangariban/RickAndMortyFlutter/.dart_tool/flutter_build/0fb604c893fbf3972781a2709aa03625/native_assets.json: 

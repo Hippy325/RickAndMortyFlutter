@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Screens/CharacterList/character_list.dart';
+import 'package:flutter_application_1/tab_bar_widget/home_page.dart';
 
 void main() {
   runApp(const RickAndMorty());
@@ -17,8 +16,7 @@ class RickAndMorty extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
-      home: const CharacterListWidget(),
+      home: const HomePage(),
     );
   }
 }
-
