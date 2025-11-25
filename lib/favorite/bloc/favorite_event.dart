@@ -30,3 +30,14 @@ class FavoriteOnCharacterFavorite extends FavoriteEvent {
 }
 
 class FavoriteOnReturned extends FavoriteEvent {}
+
+class FavoriteOnSorting extends FavoriteEvent {
+  final String sortingName;
+
+  FavoriteOnSorting({
+    required this.sortingName,
+  });
+
+  @override
+  List<Object?> get props => [sortingName];
+}

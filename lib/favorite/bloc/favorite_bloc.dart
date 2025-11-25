@@ -12,6 +12,8 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   final ImageService imageService;
 
   List<Character> characters = [];
+  List<Character> sortedCharacters = [];
+  String sortingName = '';
 
   FavoriteBloc({
     required this.imageService,
@@ -38,11 +40,29 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
     on<FavoriteOnReturned>((event, emit) async {
       _updating(emit);
     });
+    on<FavoriteOnSorting>((event, emit) async {
+      sortingName = event.sortingName;
+      _updating(emit);
+    });
   }
 
   _updating(Emitter<FavoriteState> emit) {
+    _sortingCharacters();
     emit(FavoriteUpdated(
-      characters: List<Character>.from(characters),
+      characters: List<Character>.from(sortedCharacters),
     ));
+  }
+
+  _sortingCharacters() {
+    if (sortingName.isEmpty) {
+      sortedCharacters = characters;
+    } else {
+      sortedCharacters = characters
+          .where(
+              (c) => c.name.toLowerCase().contains(sortingName.toLowerCase()))
+          .toList();
+
+      sortedCharacters.sort((a, b) => b.name.compareTo(a.name));
+    }
   }
 }
