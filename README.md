@@ -1,16 +1,16 @@
-# Rick&&Morty-flutter
+Приложение показывает список персонажей из мультсериала "Рик и Морти", и позволяет нам выбрать фаворитов.
+Для удобства выполняется сохранение избранных персонажей (их данных и изображений) на устройстве.
 
-A new Flutter project.
+Сборка и запуск проекта:
+1) Убедитесь что установили flutter нужной версии. При разработке проекта использовалась версия flutter 3.38.2. На более старых версиях может и не собраться.
+Для уточнения своей версири воспользуйтесь командой flutter --version. 
 
-## Getting Started
+2) Выполните команду "flutter pub get", находясь в корневой папке проекта.
 
-This project is a starting point for a Flutter application.
+3) Запустите симмулятор (iOS либо Android).
 
-A few resources to get you started if this is your first Flutter project:
+4) Выполните команду "flutter run"
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Проект должен запуститься
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Повторюсь, моя версия flutter 3.38.2.
